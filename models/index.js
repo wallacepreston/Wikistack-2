@@ -15,7 +15,7 @@ var Page = db.define('page', {
         allowNull: false
     },
     content: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
     },
     status: {
