@@ -21,10 +21,6 @@ var Page = db.define('page', {
     status: {
         type: Sequelize.ENUM('open', 'closed')
     },
-    date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-    },
     tags: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         defaultValue: [],
