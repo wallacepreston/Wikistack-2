@@ -37,8 +37,8 @@
         <label for="content" class="col-sm-2 control-label">Status</label>
         <div class="col-sm-10">
             <select name="status">
-                <option {% if page.status === "open" %}selected{% endif %}>open</option>
-                <option {% if page.status === "closed" %}selected{% endif %}>closed</option>
+                <option {% if page.status == "open" %}selected{% endif %}>open</option>
+                <option {% if page.status == "closed" %}selected{% endif %}>closed</option>
             </select>
         </div>
     </div>
@@ -46,7 +46,7 @@
     <div class="form-group">
         <label for="tags" class="col-sm-2 control-label">Tags</label>
         <div class="col-sm-10">
-            <input name="tags" type="text" class="form-control" value="{{ page.tags.join(',') }}" />
+            <input name="tags" type="text" class="form-control" {% if page.tags.length > 0 %}value="{{ page.tags.join(',')}}"{% endif %} />
         </div>
     </div>
 

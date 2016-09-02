@@ -4,16 +4,18 @@ var app = express();
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 
-var swig = require('swig');
-require('./filters')(swig);
+var nunjucks = require('nunjucks');
 
 var path = require('path');
 module.exports = app;
 
-app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'html');
-app.engine('html', swig.renderFile);
-swig.setDefaults({ cache: false });
+app.engine('html', nunjucks.render);
+var env = nunjucks.configure('views', { noCache: true });
+require('./filters')(env);
+
+var AutoEscapeExtension = require("nunjucks-autoescape")(nunjucks);
+env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, './public')));

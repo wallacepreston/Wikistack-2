@@ -10,11 +10,13 @@
   <hr>
   <ul class="list-unstyled">
     <ul>
+      {% autoescape false %}
       {% for page in pages %}
       <li>
         {{ page | pageLink }}
       </li>
       {% endfor %}
+      {% endautoescape %}
     </ul>
   </ul>
 {% endblock %}
