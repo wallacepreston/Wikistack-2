@@ -1,4 +1,4 @@
-module.exports = function (swig) {
+module.exports = function (env) {
 
     var pageLink = function (page) {
         return '<a href="' + page.route + '">' + page.title + '</a>';
@@ -6,6 +6,6 @@ module.exports = function (swig) {
 
     pageLink.safe = true;
 
-    swig.setFilter('pageLink', pageLink);
+    env.addFilter('pageLink', pageLink);
 
 };
