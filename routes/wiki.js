@@ -25,14 +25,14 @@ router.post('/', function (req, res, next) {
                 email: req.body.email
             }
         })
-        .spread(function (user) {
+        .spread(function (user, createdPageBool) {
             return Page.create(req.body)
                 .then(function (page) {
                     return page.setAuthor(user);
                 });
         })
         .then(function (page) {
-            res.redirect(page.get('route'));
+            res.redirect(page.route);
         })
         .catch(next);
 
@@ -58,15 +58,8 @@ router.post('/:urlTitle', function (req, res, next) {
             },
             returning: true
         })
-        .then(function () {
-            return Page.findOne({
-                where: {
-                    urlTitle: req.params.urlTitle
-                }
-            });
-        })
-        .then(function (page) {
-            res.redirect(page.get('route'));
+        .spread(function (updatedRowCount, updatedPages) { //all updated pages are returned. We will only be looking at one of them
+            res.redirect(updatedPages[0].route);
         })
         .catch(next);
 
@@ -104,7 +97,7 @@ router.get('/:urlTitle', function (req, res, next) {
         })
         .then(function (page) {
             if (page === null) {
-                res.status(404).send();
+                res.sendStatus(404);
             } else {
                 res.render('wikipage', {
                     page: page
@@ -128,7 +121,7 @@ router.get('/:urlTitle/edit', function (req, res, next) {
         })
         .then(function (page) {
             if (page === null) {
-                res.status(404).send();
+                res.sendStatus(404);
             } else {
                 res.render('editpage', {
                     page: page

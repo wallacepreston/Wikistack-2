@@ -14,6 +14,8 @@ app.engine('html', nunjucks.render);
 var env = nunjucks.configure('views', { noCache: true });
 require('./filters')(env);
 
+//plug-in that basically tells nunjucks it’s OK to render the html in a string 
+//there’s a built-in nunjucks filter that indicates this as well, but this is another option, giving you a tag so you can indicate a bunch of stuff that’s safe to render
 var AutoEscapeExtension = require("nunjucks-autoescape")(nunjucks);
 env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
 

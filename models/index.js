@@ -8,7 +8,8 @@ var db = new Sequelize('postgres://localhost:5432/wikistack', {
 var Page = db.define('page', {
     title: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     urlTitle: {
         type: Sequelize.STRING,
@@ -94,6 +95,7 @@ var User = db.define('user', {
     }
 });
 
+//This adds methods to 'Page', such as '.setAuthor'. It also creates a foreign key attribute on the Page table pointing ot the User table
 Page.belongsTo(User, {
     as: 'author'
 });
