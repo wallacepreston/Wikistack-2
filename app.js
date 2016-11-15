@@ -1,12 +1,10 @@
 var express = require('express');
 var app = express();
-
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-
 var nunjucks = require('nunjucks');
-
 var path = require('path');
+
 module.exports = app;
 
 app.set('view engine', 'html');
@@ -19,9 +17,9 @@ require('./filters')(env);
 var AutoEscapeExtension = require("nunjucks-autoescape")(nunjucks);
 env.addExtension('AutoEscapeExtension', new AutoEscapeExtension(env));
 
-app.use(morgan('dev'));
-app.use(express.static(path.join(__dirname, './public')));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(morgan('dev')); //logging middleware
+app.use(express.static(path.join(__dirname, './public'))); //serving up static files (e.g. css files)
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use('/wiki', require('./routes/wiki'));
@@ -31,7 +29,8 @@ app.get('/', function (req, res) {
    res.render('index');
 });
 
+//error handling middleware - MUST have all 4 parameters
 app.use(function (err, req, res, next) {
     console.error(err.stack);
-    res.status(500).send(err.message);
+    res.status(err.status || 500).send(err.message || "Internal Error");
 });

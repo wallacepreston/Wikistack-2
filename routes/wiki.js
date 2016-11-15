@@ -60,6 +60,7 @@ router.post('/:urlTitle', function (req, res, next) {
         })
         .spread(function (updatedRowCount, updatedPages) { //all updated pages are returned. We will only be looking at one of them
             res.redirect(updatedPages[0].route);
+            //alternatively we could do a findAll after the update instead of using `returning` keyword
         })
         .catch(next);
 
@@ -84,6 +85,12 @@ router.get('/add', function (req, res) {
     res.render('addpage');
 });
 
+function generateError (message, status) {
+    let err = new Error(message);
+    err.status = status;
+    return err;
+}
+
 // /wiki/(dynamic value)
 router.get('/:urlTitle', function (req, res, next) {
 
@@ -97,7 +104,7 @@ router.get('/:urlTitle', function (req, res, next) {
         })
         .then(function (page) {
             if (page === null) {
-                res.sendStatus(404);
+                throw generateError('No page found with this title', 404);
             } else {
                 res.render('wikipage', {
                     page: page
@@ -121,6 +128,7 @@ router.get('/:urlTitle/edit', function (req, res, next) {
         })
         .then(function (page) {
             if (page === null) {
+                //to show you sendStatus in contrast to using the error handling middleware above
                 res.sendStatus(404);
             } else {
                 res.render('editpage', {
@@ -143,7 +151,7 @@ router.get('/:urlTitle/similar', function (req, res, next) {
         })
         .then(function (page) {
             if (page === null) {
-                res.status(404).send();
+                throw generateError('No pages correspond to this title', 404);
             } else {
                 return page.findSimilar()
                     .then(function (pages) {

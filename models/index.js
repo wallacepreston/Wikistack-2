@@ -8,12 +8,13 @@ var db = new Sequelize('postgres://localhost:5432/wikistack', {
 var Page = db.define('page', {
     title: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     urlTitle: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        //since we are searching, editing, deleting by urlTitle, these need to be unique
+        unique: true 
     },
     content: {
         type: Sequelize.TEXT,
