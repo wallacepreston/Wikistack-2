@@ -1,8 +1,8 @@
 var Sequelize = require('sequelize');
 var marked = require('marked');
 
-var db = new Sequelize('postgres://localhost:5432/wikistack', { 
-    logging: false 
+var db = new Sequelize('postgres://localhost:5432/wikistack', {
+    logging: false
 });
 
 var Page = db.define('page', {
@@ -14,7 +14,7 @@ var Page = db.define('page', {
         type: Sequelize.STRING,
         allowNull: false,
         //since we are searching, editing, deleting by urlTitle, these need to be unique
-        unique: true 
+        unique: true
     },
     content: {
         type: Sequelize.TEXT,
@@ -49,32 +49,30 @@ var Page = db.define('page', {
             return marked(this.content);
         }
     },
-    classMethods: {
-        findByTag: function (tag) {
-            return this.findAll({
-                where: {
-                    tags: {
-                        $contains: [tag]
-                    }
-                }
-            });
-        }
-    },
-    instanceMethods: {
-        findSimilar: function () {
-            return Page.findAll({
-                where: {
-                    id: {
-                        $ne: this.id
-                    },
-                    tags: {
-                        $overlap: this.tags
-                    }
-                }
-            });
-        }
-    }
 });
+
+Page.findByTag = function (tag) {
+    return this.findAll({
+        where: {
+            tags: {
+                $contains: [tag]
+            }
+        }
+    });
+}
+
+Page.prototype.findSimilar = function () {
+    return Page.findAll({
+        where: {
+            id: {
+                $ne: this.id
+            },
+            tags: {
+                $overlap: this.tags
+            }
+        }
+    });
+}
 
 Page.hook('beforeValidate', function (page) {
     if (page.title) {

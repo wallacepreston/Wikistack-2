@@ -14,7 +14,7 @@
     "nunjucks-autoescape": "^1.0.1",
     "pg": "^4.5.3",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^3.21.0"
+    "sequelize": "^4.4.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
