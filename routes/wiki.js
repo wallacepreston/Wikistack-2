@@ -17,18 +17,22 @@ router.get("/", async (req, res, next) => {
 
 // /wiki
 router.post("/", async (req, res, next) => {
-  const [user, createdPageBool] = await User.findOrCreate({
-    where: {
-      name: req.body.name,
-      email: req.body.email
-    }
-  });
+  try {
+    const [user, createdPageBool] = await User.findOrCreate({
+      where: {
+        name: req.body.name,
+        email: req.body.email
+      }
+    });
 
-  const page = await Page.create(req.body);
+    const page = await Page.create(req.body);
 
-  page.setAuthor(user);
+    page.setAuthor(user);
 
-  res.redirect(page.route);
+    res.redirect(page.route);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/search", async (req, res, next) => {
@@ -83,17 +87,21 @@ router.get("/add", (req, res) => {
 
 // /wiki/(dynamic value)
 router.get("/:urlTitle", async (req, res, next) => {
-  const page = await Page.findOne({
-    where: {
-      urlTitle: req.params.urlTitle
-    },
-    include: [{ model: User, as: "author" }]
-  });
+  try {
+    const page = await Page.findOne({
+      where: {
+        urlTitle: req.params.urlTitle
+      },
+      include: [{ model: User, as: "author" }]
+    });
 
-  if (page === null) {
-    throw generateError("No page found with this title", 404);
-  } else {
-    res.send(wikiPage(page));
+    if (page === null) {
+      throw generateError("No page found with this title", 404);
+    } else {
+      res.send(wikiPage(page));
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
