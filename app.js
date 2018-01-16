@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/wiki', require('./routes/wiki'));
-// app.use('/users', require('./routes/users'));
+app.use('/users', require('./routes/users'));
 
 // TODO: How res.render index can work with no data???
 // app.get('/', function (req, res) {
