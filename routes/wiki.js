@@ -3,143 +3,150 @@ const router = express.Router();
 const models = require("../models");
 const Page = models.Page;
 const User = models.User;
+const { main, addPage, editPage, wikiPage } = require("../views");
 
 // /wiki
 router.get("/", async (req, res, next) => {
-  const pages = await Page.findAll({});
-  res.send()
-    .then(function(pages) {
-      res.render("index", { pages: pages });
-    })
-    .catch(next);
+  try {
+    const pages = await Page.findAll();
+    res.send(main(pages));
+  } catch (error) {
+    next(error);
+  }
 });
 
 // /wiki
-router.post("/", function(req, res, next) {
-  User.findOrCreate({
+router.post("/", async (req, res, next) => {
+  const [user, createdPageBool] = await User.findOrCreate({
     where: {
       name: req.body.name,
       email: req.body.email
     }
-  })
-    .spread(function(user, createdPageBool) {
-      return Page.create(req.body).then(function(page) {
-        return page.setAuthor(user);
-      });
-    })
-    .then(function(page) {
-      res.redirect(page.route);
-    })
-    .catch(next);
+  });
+
+  const page = await Page.create(req.body);
+
+  page.setAuthor(user);
+
+  res.redirect(page.route);
 });
 
-router.get("/search", function(req, res, next) {
-  Page.findByTag(req.query.search)
-    .then(function(pages) {
-      res.render("index", {
-        pages: pages
-      });
-    })
-    .catch(next);
+router.get("/search", async (req, res, next) => {
+  try {
+    const pages = await Page.findAll({
+      where: {
+        tags: {
+          $contains: [req.query.search]
+        }
+      }
+    });
+
+    res.send(main(pages));
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.post("/:urlTitle", function(req, res, next) {
-  Page.update(req.body, {
-    where: {
-      urlTitle: req.params.urlTitle
-    },
-    returning: true
-  })
-    .spread(function(updatedRowCount, updatedPages) {
-      //all updated pages are returned. We will only be looking at one of them
-      res.redirect(updatedPages[0].route);
-      //alternatively we could do a findAll after the update instead of using `returning` keyword
-    })
-    .catch(next);
+router.post("/:urlTitle", async (req, res, next) => {
+  try {
+    const [updatedRowCount, updatedPages] = await Page.update(req.body, {
+      where: {
+        urlTitle: req.params.urlTitle
+      },
+      returning: true
+    });
+
+    res.redirect(updatedPages[0].route);
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/:urlTitle/delete", function(req, res, next) {
-  Page.destroy({
-    where: {
-      urlTitle: req.params.urlTitle
-    }
-  })
-    .then(function() {
-      res.redirect("/wiki");
-    })
-    .catch(next);
+router.get("/:urlTitle/delete", async (req, res, next) => {
+  try {
+    await Page.destroy({
+      where: {
+        urlTitle: req.params.urlTitle
+      }
+    });
+
+    res.redirect("/wiki");
+  } catch (error) {
+    next(error);
+  }
 });
 
 // /wiki/add
-router.get("/add", function(req, res) {
-  res.render("addpage");
+router.get("/add", (req, res) => {
+  res.send(addPage());
 });
 
-function generateError(message, status) {
+// /wiki/(dynamic value)
+router.get("/:urlTitle", async (req, res, next) => {
+  const page = await Page.findOne({
+    where: {
+      urlTitle: req.params.urlTitle
+    },
+    include: [{ model: User, as: "author" }]
+  });
+
+  if (page === null) {
+    throw generateError("No page found with this title", 404);
+  } else {
+    res.send(wikiPage(page));
+  }
+});
+
+router.get("/:urlTitle/edit", async (req, res, next) => {
+  try {
+    const page = await Page.findOne({
+      where: {
+        urlTitle: req.params.urlTitle
+      },
+      include: [{ model: User, as: "author" }]
+    });
+
+    if (page === null) {
+      //to show you sendStatus in contrast to using the error handling middleware above
+      res.sendStatus(404);
+    } else {
+      res.send(editPage(page));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// /wiki/(dynamic value)
+router.get("/:urlTitle/similar", async (req, res, next) => {
+  try {
+    const page = await Page.findOne({
+      where: {
+        urlTitle: req.params.urlTitle
+      }
+    });
+
+    if (page === null) {
+      throw generateError("No pages correspond to this title", 404);
+    } else {
+      const similar = await Page.findAll({
+        where: {
+          id: { $ne: page.id },
+          tags: { $overlap: page.tags }
+        }
+      });
+
+      res.send(main(similar));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+const generateError = (message, status) => {
   let err = new Error(message);
   err.status = status;
   return err;
-}
-
-// /wiki/(dynamic value)
-router.get("/:urlTitle", function(req, res, next) {
-  Page.findOne({
-    where: {
-      urlTitle: req.params.urlTitle
-    },
-    include: [{ model: User, as: "author" }]
-  })
-    .then(function(page) {
-      if (page === null) {
-        throw generateError("No page found with this title", 404);
-      } else {
-        res.render("wikipage", {
-          page: page
-        });
-      }
-    })
-    .catch(next);
-});
-
-router.get("/:urlTitle/edit", function(req, res, next) {
-  Page.findOne({
-    where: {
-      urlTitle: req.params.urlTitle
-    },
-    include: [{ model: User, as: "author" }]
-  })
-    .then(function(page) {
-      if (page === null) {
-        //to show you sendStatus in contrast to using the error handling middleware above
-        res.sendStatus(404);
-      } else {
-        res.render("editpage", {
-          page: page
-        });
-      }
-    })
-    .catch(next);
-});
-
-// /wiki/(dynamic value)
-router.get("/:urlTitle/similar", function(req, res, next) {
-  Page.findOne({
-    where: {
-      urlTitle: req.params.urlTitle
-    }
-  })
-    .then(function(page) {
-      if (page === null) {
-        throw generateError("No pages correspond to this title", 404);
-      } else {
-        return page.findSimilar().then(function(pages) {
-          res.render("index", {
-            pages: pages
-          });
-        });
-      }
-    })
-    .catch(next);
-});
+};
 
 module.exports = router;

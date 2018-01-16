@@ -51,28 +51,6 @@ var Page = db.define('page', {
     },
 });
 
-Page.findByTag = function (tag) {
-    return this.findAll({
-        where: {
-            tags: {
-                $contains: [tag]
-            }
-        }
-    });
-}
-
-Page.prototype.findSimilar = function () {
-    return Page.findAll({
-        where: {
-            id: {
-                $ne: this.id
-            },
-            tags: {
-                $overlap: this.tags
-            }
-        }
-    });
-}
 
 Page.hook('beforeValidate', function (page) {
     if (page.title) {
@@ -100,6 +78,7 @@ Page.belongsTo(User, {
 });
 
 module.exports = {
-    Page: Page,
-    User: User
+    db,
+    Page,
+    User
 };

@@ -1,14 +1,12 @@
-var http = require('http');
-var server = http.createServer();
-var models = require('./models');
-var Promise = require('bluebird');
+const http = require('http');
+const server = http.createServer();
+const models = require('./models');
 
 server.on('request', require('./app'));
 
-//sync creates the table if it does not exist. Force true drops the table first if it exists
+//sync creates the table if it does not exist. alter true creates the tables and makes any changes to keep the modules in sync
 //order matters because we cannot drop the User table if there are items in the Page table that reference it
-models.Page.sync({force: true}) 
-	.then(() => models.User.sync({force: true}))
+models.db.sync() //{ alter: true }
     .then(function () {
         server.listen(3001, function () {
             console.log('Server is listening on port 3001!');

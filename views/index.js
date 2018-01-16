@@ -1,15 +1,9 @@
-const layout = require("./layout");
+const addPage = require("./addPage");
+const editPage = require("./editPage");
+const error = require("./error");
+const main = require("./main");
+const userList = require("./userList");
+const userPages = require("./userPages");
+const wikiPage = require("./wikiPage");
 
-module.exports = (pages) => layout(html`
-  <h3>Pages</h3>
-  <hr>
-  <form method="GET" action="/wiki/search">
-    <input type="text" name="search" />
-    <button type="submit">Search</button>
-  </form>
-  <hr>
-  <ul class="list-unstyled">
-    <ul>
-      ${pages.map(page => html`<li><a href="${page.route}">${page.title}</a></li>`)}
-    </ul>
-  </ul>`);
+module.exports = { addPage, editPage, error, main, userList, userPages, wikiPage };
