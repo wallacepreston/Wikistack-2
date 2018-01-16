@@ -94,7 +94,6 @@ router.get("/:urlTitle", async (req, res, next) => {
       },
       include: [{ model: User, as: "author" }]
     });
-
     if (page === null) {
       throw generateError("No page found with this title", 404);
     } else {

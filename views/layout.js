@@ -35,7 +35,5 @@ module.exports = (content) => html`<!DOCTYPE html>
       <div id="footer" class="container text-muted">
         WIKISTACK by Fullstack Academy
       </div>
-      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-      <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     </body>
   </html>`;
