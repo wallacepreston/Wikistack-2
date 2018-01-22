@@ -1,5 +1,4 @@
 var Sequelize = require('sequelize');
-var marked = require('marked');
 
 var db = new Sequelize('postgres://localhost:5432/wikistack', {
     logging: false
@@ -40,15 +39,6 @@ var Page = db.define('page', {
 
         }
     }
-}, {
-    getterMethods: {
-        route: function () {
-            return '/wiki/' + this.urlTitle;
-        },
-        renderedContent: function () {
-            return marked(this.content);
-        }
-    },
 });
 
 
@@ -72,10 +62,8 @@ var User = db.define('user', {
     }
 });
 
-//This adds methods to 'Page', such as '.setAuthor'. It also creates a foreign key attribute on the Page table pointing ot the User table
-Page.belongsTo(User, {
-    as: 'author'
-});
+//This adds methods to 'Page', such as '.setUser'. It also creates a foreign key attribute on the Page table pointing ot the User table
+Page.belongsTo(User);
 
 module.exports = {
     db,

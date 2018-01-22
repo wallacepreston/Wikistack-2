@@ -27,9 +27,9 @@ router.post("/", async (req, res, next) => {
 
     const page = await Page.create(req.body);
 
-    page.setAuthor(user);
+    page.setUser(user);
 
-    res.redirect(page.route);
+    res.redirect('/wiki/' + page.urlTitle);
   } catch (error) {
     next(error);
   }
@@ -60,7 +60,7 @@ router.post("/:urlTitle", async (req, res, next) => {
       returning: true
     });
 
-    res.redirect(updatedPages[0].route);
+    res.redirect('/wiki/' + updatedPages[0].urlTitle);
   } catch (error) {
     next(error);
   }
@@ -92,7 +92,7 @@ router.get("/:urlTitle", async (req, res, next) => {
       where: {
         urlTitle: req.params.urlTitle
       },
-      include: [{ model: User, as: "author" }]
+      include: [{ model: User }]
     });
     if (page === null) {
       throw generateError("No page found with this title", 404);
@@ -110,7 +110,7 @@ router.get("/:urlTitle/edit", async (req, res, next) => {
       where: {
         urlTitle: req.params.urlTitle
       },
-      include: [{ model: User, as: "author" }]
+      include: [{ model: User }]
     });
 
     if (page === null) {
