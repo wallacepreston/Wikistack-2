@@ -50,7 +50,7 @@ module.exports = (page, author) => layout(html`
           name="tags"
           type="text"
           class="form-control"
-          value=${page.tags.length? page.tags.join(', ') : ""}
+          value="${page.tags.length? page.tags.join(', ') : ""}"
         />
       </div>
     </div>
