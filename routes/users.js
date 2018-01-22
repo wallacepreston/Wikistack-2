@@ -21,7 +21,7 @@ router.get("/:userId", async (req, res, next) => {
     const user = await User.findById(req.params.userId);
     const pages = await Page.findAll({
       where: {
-        userId: req.params.userId
+        authorId: req.params.userId
       }
     });
 

@@ -1,21 +1,21 @@
 const html = require("html-template-tag");
 const layout = require("./layout");
 
-module.exports = (page) => layout(html`
+module.exports = (page, author) => layout(html`
   <h3>Edit a Page</h3>
   <hr>
   <form method="POST" action="/wiki/${page.slug}">
     <div class="form-group">
       <label for="name" class="col-sm-2 control-label">Author Name</label>
       <div class="col-sm-10">
-        <input name="name" type="text" class="form-control" value="${page.user.name}"/>
+        <input name="name" type="text" class="form-control" value="${author.name}"/>
       </div>
     </div>
 
     <div class="form-group">
       <label for="email" class="col-sm-2 control-label">Author Email</label>
       <div class="col-sm-10">
-        <input name="email" type="text" class="form-control" value="${page.user.email}" />
+        <input name="email" type="text" class="form-control" value="${author.email}" />
       </div>
     </div>
 

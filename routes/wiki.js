@@ -27,7 +27,7 @@ router.post("/", async (req, res, next) => {
 
     const page = await Page.create(req.body);
 
-    page.setUser(user);
+    page.setAuthor(user);
 
     res.redirect("/wiki/" + page.slug);
   } catch (error) {
@@ -91,13 +91,13 @@ router.get("/:slug", async (req, res, next) => {
     const page = await Page.findOne({
       where: {
         slug: req.params.slug
-      },
-      include: [{ model: User }]
+      }
     });
     if (page === null) {
       throw generateError("No page found with this title", 404);
     } else {
-      res.send(wikiPage(page));
+      const author = await page.getAuthor();
+      res.send(wikiPage(page, author));
     }
   } catch (error) {
     next(error);
@@ -109,15 +109,15 @@ router.get("/:slug/edit", async (req, res, next) => {
     const page = await Page.findOne({
       where: {
         slug: req.params.slug
-      },
-      include: [{ model: User }]
+      }
     });
 
     if (page === null) {
       //to show you sendStatus in contrast to using the error handling middleware above
       res.sendStatus(404);
     } else {
-      res.send(editPage(page));
+      const author = await page.getAuthor();
+      res.send(editPage(page, author));
     }
   } catch (error) {
     next(error);

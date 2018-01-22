@@ -2,11 +2,11 @@ const html = require("html-template-tag");
 const layout = require("./layout");
 var marked = require('marked');
 
-module.exports = (page) => layout(html`
+module.exports = (page, author) => layout(html`
   <h3>${page.title}
       <small> (<a href="/wiki/${page.slug}/similar">Similar</a>)</small>
   </h3>
-  <h4>by <a href="/users/${page.user.id}">${page.user.name}</a></h4>
+  <h4>by <a href="/users/${author.id}">${author.name}</a></h4>
   <ul>
     ${page.tags.map(tag => html`<li>${tag}</li>`)}
   </ul>
