@@ -4,7 +4,7 @@ var marked = require('marked');
 
 module.exports = (page) => layout(html`
   <h3>${page.title}
-      <small> (<a href="/wiki/${page.urlTitle}/similar">Similar</a>)</small>
+      <small> (<a href="/wiki/${page.slug}/similar">Similar</a>)</small>
   </h3>
   <h4>by <a href="/users/${page.user.id}">${page.user.name}</a></h4>
   <ul>
@@ -13,6 +13,6 @@ module.exports = (page) => layout(html`
   <hr/>
   <div class="page-body">$${marked(page.content)}</div>
   <hr/>
-  <a href="/wiki/${page.urlTitle}/edit" class="btn btn-primary">edit this page</a>
-  <a href="/wiki/${page.urlTitle}/delete" class="btn btn-danger">delete this page</a>
+  <a href="/wiki/${page.slug}/edit" class="btn btn-primary">edit this page</a>
+  <a href="/wiki/${page.slug}/delete" class="btn btn-danger">delete this page</a>
 `);

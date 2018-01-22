@@ -9,10 +9,10 @@ const Page = db.define("page", {
     type: Sequelize.STRING,
     allowNull: false
   },
-  urlTitle: {
+  slug: {
     type: Sequelize.STRING,
     allowNull: false,
-    //since we are searching, editing, deleting by urlTitle, these need to be unique
+    //since we are searching, editing, deleting by slug, these need to be unique
     unique: true
   },
   content: {
@@ -37,14 +37,10 @@ Page.hook("beforeValidate", function(page) {
   }
 
   /*
-     * Generate urlTitle
+     * Generate slug
      */
-  if (page.title) {
-    page.urlTitle = page.title.replace(/\s/g, "_").replace(/\W/g, "");
-  } else {
-    page.urlTitle = Math.random()
-      .toString(36)
-      .substring(2, 7);
+  if (!page.slug) {
+    page.slug = page.title.replace(/\s/g, "_").replace(/\W/g, "").toLowerCase();
   }
 });
 

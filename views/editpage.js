@@ -4,7 +4,7 @@ const layout = require("./layout");
 module.exports = (page) => layout(html`
   <h3>Edit a Page</h3>
   <hr>
-  <form method="POST" action="/wiki/${page.urlTitle}">
+  <form method="POST" action="/wiki/${page.slug}">
     <div class="form-group">
       <label for="name" class="col-sm-2 control-label">Author Name</label>
       <div class="col-sm-10">
