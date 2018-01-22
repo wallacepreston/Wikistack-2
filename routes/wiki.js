@@ -29,7 +29,7 @@ router.post("/", async (req, res, next) => {
 
     page.setUser(user);
 
-    res.redirect('/wiki/' + page.urlTitle);
+    res.redirect("/wiki/" + page.urlTitle);
   } catch (error) {
     next(error);
   }
@@ -60,7 +60,7 @@ router.post("/:urlTitle", async (req, res, next) => {
       returning: true
     });
 
-    res.redirect('/wiki/' + updatedPages[0].urlTitle);
+    res.redirect("/wiki/" + updatedPages[0].urlTitle);
   } catch (error) {
     next(error);
   }

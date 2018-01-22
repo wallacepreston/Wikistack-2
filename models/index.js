@@ -1,10 +1,10 @@
-var Sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 
-var db = new Sequelize("postgres://localhost:5432/wikistack", {
+const db = new Sequelize("postgres://localhost:5432/wikistack", {
   logging: false
 });
 
-var Page = db.define("page", {
+const Page = db.define("page", {
   title: {
     type: Sequelize.STRING,
     allowNull: false
@@ -48,7 +48,7 @@ Page.hook("beforeValidate", function(page) {
   }
 });
 
-var User = db.define("user", {
+const User = db.define("user", {
   name: {
     type: Sequelize.STRING,
     allowNull: false
