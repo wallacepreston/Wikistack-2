@@ -18,7 +18,7 @@ router.get("/", async (req, res, next) => {
 // /wiki
 router.post("/", async (req, res, next) => {
   try {
-    const [user, createdUserBool] = await User.findOrCreate({
+    const [user, wasCreated] = await User.findOrCreate({
       where: {
         name: req.body.name,
         email: req.body.email
