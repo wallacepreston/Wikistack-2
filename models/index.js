@@ -28,7 +28,7 @@ const Page = db.define("page", {
   }
 });
 
-Page.hook("beforeValidate", function(page) {
+Page.beforeValidate(page => {
   /*
      * make sure tags are an array
      */
