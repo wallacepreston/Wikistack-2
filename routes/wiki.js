@@ -31,20 +31,6 @@ router.post("/", async (req, res, next) => {
   } catch (error) { next(error) }
 });
 
-router.get("/search", async (req, res, next) => {
-  try {
-    const pages = await Page.findAll({
-      where: {
-        tags: {
-          $contains: [req.query.search]
-        }
-      }
-    });
-
-    res.send(main(pages));
-  } catch (error) { next(error) }
-});
-
 router.post("/:slug", async (req, res, next) => {
   try {
     const [updatedRowCount, updatedPages] = await Page.update(req.body, {
@@ -84,7 +70,7 @@ router.get("/:slug", async (req, res, next) => {
       }
     });
     if (page === null) {
-      throw generateError("No page found with this title", 404);
+      res.sendStatus(404);
     } else {
       const author = await page.getAuthor();
       res.send(wikiPage(page, author));
@@ -101,7 +87,6 @@ router.get("/:slug/edit", async (req, res, next) => {
     });
 
     if (page === null) {
-      //to show you sendStatus in contrast to using the error handling middleware above
       res.sendStatus(404);
     } else {
       const author = await page.getAuthor();
@@ -109,35 +94,5 @@ router.get("/:slug/edit", async (req, res, next) => {
     }
   } catch (error) { next(error) }
 });
-
-// /wiki/(dynamic value)
-router.get("/:slug/similar", async (req, res, next) => {
-  try {
-    const page = await Page.findOne({
-      where: {
-        slug: req.params.slug
-      }
-    });
-
-    if (page === null) {
-      throw generateError("No pages correspond to this title", 404);
-    } else {
-      const similar = await Page.findAll({
-        where: {
-          id: { $ne: page.id },
-          tags: { $overlap: page.tags }
-        }
-      });
-
-      res.send(main(similar));
-    }
-  } catch (error) { next(error) }
-});
-
-const generateError = (message, status) => {
-  let err = new Error(message);
-  err.status = status;
-  return err;
-};
 
 module.exports = router;

@@ -21,24 +21,13 @@ const Page = db.define("page", {
   },
   status: {
     type: Sequelize.ENUM("open", "closed")
-  },
-  tags: {
-    type: Sequelize.ARRAY(Sequelize.STRING),
-    defaultValue: []
   }
 });
 
 Page.beforeValidate(page => {
   /*
-     * make sure tags are an array
-     */
-  if (typeof page.tags === "string") {
-    page.tags = page.tags.split(",").map(str => str.trim());
-  }
-
-  /*
-     * Generate slug
-     */
+   * Generate slug
+   */
   if (!page.slug) {
     page.slug = page.title.replace(/\s/g, "_").replace(/\W/g, "").toLowerCase();
   }

@@ -3,13 +3,7 @@ const layout = require("./layout");
 const marked = require('marked');
 
 module.exports = (page, author) => layout(html`
-  <h3>${page.title}
-      <small> (<a href="/wiki/${page.slug}/similar">Similar</a>)</small>
-  </h3>
   <h4>by <a href="/users/${author.id}">${author.name}</a></h4>
-  <ul>
-    ${page.tags.map(tag => html`<li>${tag}</li>`)}
-  </ul>
   <hr/>
   <div class="page-body">$${marked(page.content)}</div>
   <hr/>
