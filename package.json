@@ -5,7 +5,6 @@
     "start": "nodemon server.js"
   },
   "dependencies": {
-    "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "html-template-tag": "^2.0.0",
     "marked": "^0.3.12",
